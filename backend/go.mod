@@ -5,6 +5,7 @@ go 1.21
 require (
 	github.com/cloudwego/kitex v0.9.0
 	github.com/google/uuid v1.5.0
+	github.com/gorilla/websocket v1.5.1
 	gorm.io/driver/mysql v1.5.2
 	gorm.io/gorm v1.25.5
 )

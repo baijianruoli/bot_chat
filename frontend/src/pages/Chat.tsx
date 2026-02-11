@@ -20,6 +20,7 @@ import {
 } from '@ant-design/icons'
 import { useRoomStore, useMessageStore, useUserStore } from '../store'
 import { messageApi } from '../api'
+import { useWebSocket } from '../hooks/useWebSocket'
 import dayjs from 'dayjs'
 
 const { Text } = Typography
@@ -34,6 +35,9 @@ const Chat: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [sending, setSending] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  // WebSocket 连接
+  const { sendMessage: sendWSMessage, isConnected } = useWebSocket(roomId)
 
   // 获取历史消息
   const fetchMessages = async () => {
@@ -70,6 +74,17 @@ const Chat: React.FC = () => {
 
     setSending(true)
     try {
+      // 优先使用 WebSocket 发送
+      if (isConnected) {
+        const success = sendWSMessage(inputValue.trim(), 1)
+        if (success) {
+          setInputValue('')
+          setSending(false)
+          return
+        }
+      }
+
+      // WebSocket 失败时回退到 HTTP API
       const res: any = await messageApi.send({
         room_id: roomId,
         content: inputValue.trim(),
@@ -112,6 +127,9 @@ const Chat: React.FC = () => {
           {currentRoom && (
             <Tag>{currentRoom.user_count} 人在线</Tag>
           )}
+          <Tag color={isConnected ? 'success' : 'error'}>
+            {isConnected ? '🟢 实时' : '🔴 离线'}
+          </Tag>
         </Space>
       }
       bodyStyle={{ padding: 0, height: 'calc(100vh - 180px)' }}
