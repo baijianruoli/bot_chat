@@ -1,26 +1,58 @@
 import React from 'react'
-import { Layout, Typography } from 'antd'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { useUserStore } from './store'
+import AppLayout from './components/Layout'
+import Login from './pages/Login'
+import RoomList from './pages/RoomList'
+import Chat from './pages/Chat'
 import './App.css'
 
-const { Header, Content } = Layout
-const { Title } = Typography
+// 受保护的路由
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const { isLoggedIn } = useUserStore()
+  return isLoggedIn ? <>{children}</> : <Navigate to="/login" />
+}
 
 function App() {
   return (
-    <Layout className="app-layout">
-      <Header className="app-header">
-        <Title level={3} style={{ color: 'white', margin: 0 }}>
-          🤖 Bot Chat
-        </Title>
-      </Header>
-      <Content className="app-content">
-        <div className="welcome-card">
-          <Title level={2}>欢迎使用 Bot Chat</Title>
-          <p>一个基于 Golang + Kitex + React 的实时聊天室</p>
-          <p>项目正在开发中，敬请期待...</p>
-        </div>
-      </Content>
-    </Layout>
+    <Router>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <AppLayout>
+                <RoomList />
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/rooms"
+          element={
+            <ProtectedRoute>
+              <AppLayout>
+                <RoomList />
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/chat/:roomId"
+          element={
+            <ProtectedRoute>
+              <AppLayout>
+                <Chat />
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Router>
   )
 }
 
