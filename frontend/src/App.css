@@ -1,0 +1,36 @@
+.app-layout {
+  min-height: 100vh;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  background: #1677ff;
+}
+
+.app-content {
+  padding: 24px;
+  background: #f5f5f5;
+}
+
+.welcome-card {
+  max-width: 800px;
+  margin: 100px auto;
+  padding: 48px;
+  text-align: center;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-card h2 {
+  margin-bottom: 24px;
+  color: #1677ff;
+}
+
+.welcome-card p {
+  margin-bottom: 12px;
+  color: #666;
+  font-size: 16px;
+}

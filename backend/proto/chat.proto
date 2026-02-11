@@ -1,0 +1,154 @@
+syntax = "proto3";
+
+package chat;
+
+option go_package = "github.com/baijianruoli/bot_chat/backend/kitex_gen/chat";
+
+// 聊天服务定义
+service ChatService {
+  // 用户相关
+  rpc Register(RegisterReq) returns (RegisterResp);
+  rpc Login(LoginReq) returns (LoginResp);
+  
+  // 房间相关
+  rpc CreateRoom(CreateRoomReq) returns (CreateRoomResp);
+  rpc JoinRoom(JoinRoomReq) returns (JoinRoomResp);
+  rpc LeaveRoom(LeaveRoomReq) returns (LeaveRoomResp);
+  rpc ListRooms(ListRoomsReq) returns (ListRoomsResp);
+  
+  // 消息相关
+  rpc SendMessage(SendMessageReq) returns (SendMessageResp);
+  rpc GetHistory(GetHistoryReq) returns (GetHistoryResp);
+}
+
+// 用户注册
+message RegisterReq {
+  string username = 1;
+  string password = 2;
+  string nickname = 3;
+}
+
+message RegisterResp {
+  int32 code = 1;
+  string message = 2;
+  string user_id = 3;
+}
+
+// 用户登录
+message LoginReq {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginResp {
+  int32 code = 1;
+  string message = 2;
+  string token = 3;
+  UserInfo user = 4;
+}
+
+// 用户信息
+message UserInfo {
+  string user_id = 1;
+  string username = 2;
+  string nickname = 3;
+  string avatar = 4;
+  int64 created_at = 5;
+}
+
+// 创建房间
+message CreateRoomReq {
+  string name = 1;
+  string description = 2;
+  string creator_id = 3;
+}
+
+message CreateRoomResp {
+  int32 code = 1;
+  string message = 2;
+  RoomInfo room = 3;
+}
+
+// 房间信息
+message RoomInfo {
+  string room_id = 1;
+  string name = 2;
+  string description = 3;
+  string creator_id = 4;
+  int32 user_count = 5;
+  int64 created_at = 6;
+}
+
+// 加入房间
+message JoinRoomReq {
+  string room_id = 1;
+  string user_id = 2;
+}
+
+message JoinRoomResp {
+  int32 code = 1;
+  string message = 2;
+  RoomInfo room = 3;
+}
+
+// 离开房间
+message LeaveRoomReq {
+  string room_id = 1;
+  string user_id = 2;
+}
+
+message LeaveRoomResp {
+  int32 code = 1;
+  string message = 2;
+}
+
+// 房间列表
+message ListRoomsReq {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message ListRoomsResp {
+  int32 code = 1;
+  string message = 2;
+  repeated RoomInfo rooms = 3;
+  int32 total = 4;
+}
+
+// 发送消息
+message SendMessageReq {
+  string room_id = 1;
+  string user_id = 2;
+  string content = 3;
+  int32 msg_type = 4; // 1:文本 2:图片 3:表情
+}
+
+message SendMessageResp {
+  int32 code = 1;
+  string message = 2;
+  MessageInfo msg = 3;
+}
+
+// 消息信息
+message MessageInfo {
+  string msg_id = 1;
+  string room_id = 2;
+  UserInfo sender = 3;
+  string content = 4;
+  int32 msg_type = 5;
+  int64 timestamp = 6;
+}
+
+// 获取历史消息
+message GetHistoryReq {
+  string room_id = 1;
+  int64 before_time = 2;
+  int32 limit = 3;
+}
+
+message GetHistoryResp {
+  int32 code = 1;
+  string message = 2;
+  repeated MessageInfo messages = 3;
+  bool has_more = 4;
+}
